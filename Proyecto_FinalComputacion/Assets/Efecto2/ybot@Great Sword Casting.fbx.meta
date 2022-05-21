@@ -66,8 +66,22 @@ ModelImporter:
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
-      - time: 0.15278135
+      - time: 0.14956592
         functionName: AnimAction
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.3954984
+        functionName: AnimActionTrail
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.7073955
+        functionName: AnimDimision
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
