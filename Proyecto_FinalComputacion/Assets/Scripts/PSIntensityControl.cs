@@ -7,6 +7,8 @@ public class PSIntensityControl : MonoBehaviour
 
     [SerializeField] ParticleSystem ps;
     [SerializeField] ParticleSystem psTrail;
+    [SerializeField] ParticleSystem psExplosion;
+    
     ParticleSystem.EmissionModule emission;
     ParticleSystem.MainModule main;
     ParticleSystem.EmissionModule emissionTrail;
@@ -16,6 +18,19 @@ public class PSIntensityControl : MonoBehaviour
     [SerializeField] Color actionColor;
 
     [SerializeField] Animator lightAnimator;
+    [SerializeField] Animator animator;
+
+    [SerializeField] AudioSource swordSlash;
+    [SerializeField] AudioSource explosion;
+
+
+    private void Update()
+    {
+        if (Input.GetKey(KeyCode.Space))
+        {
+            animator.Play("Great Sword Cast");
+        }
+    }
 
     //Conseguir los componentes.
     void Awake()
@@ -71,6 +86,19 @@ public class PSIntensityControl : MonoBehaviour
         mainTrail.startSize = new ParticleSystem.MinMaxCurve(0.25f);
         mainTrail.startColor = anticipationColor;
 
+    }
+
+    public void AnimExplosion()
+    {
+        psExplosion.Play();
+    }
+    public void soundExplosion()
+    {
+        explosion.Play();
+    }
+    public void soundSword()
+    {
+        swordSlash.Play();
     }
 
 }

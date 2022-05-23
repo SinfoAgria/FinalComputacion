@@ -66,6 +66,13 @@ ModelImporter:
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
+      - time: 0.060367454
+        functionName: soundExplosion
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
       - time: 0.14956592
         functionName: AnimAction
         data: 
@@ -73,8 +80,15 @@ ModelImporter:
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
-      - time: 0.3954984
-        functionName: AnimActionTrail
+      - time: 0.24146986
+        functionName: AnimExplosion
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.42436978
+        functionName: soundSword
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
