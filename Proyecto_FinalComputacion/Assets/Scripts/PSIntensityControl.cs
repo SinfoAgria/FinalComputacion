@@ -4,100 +4,203 @@ using UnityEngine;
 
 public class PSIntensityControl : MonoBehaviour
 {
+    [SerializeField] ParticleSystem psMain;
+    ParticleSystem.MainModule swordChargeMain;
+    ParticleSystem.EmissionModule swordChargeEmission;
 
-    [SerializeField] ParticleSystem ps;
-    [SerializeField] ParticleSystem psTrail;
+    [SerializeField] ParticleSystem psTrailSmoke;
+    ParticleSystem.MainModule trailSmokeMain;
+    ParticleSystem.EmissionModule trailSmokeEmission;
+
+    [SerializeField] ParticleSystem psSmoke;
+    ParticleSystem.MainModule smokeMain;
+    ParticleSystem.EmissionModule smokeEmission;
+
+    [SerializeField] ParticleSystem psImpact;
+    ParticleSystem.MainModule impactMain;
+
+    [SerializeField] ParticleSystem psFissure;
+    ParticleSystem.MainModule fissureMain;
+
+    [SerializeField] Animator animator;
+  
+    ParticleSystem.ColorOverLifetimeModule swordChargeColor;
+    ParticleSystem.ColorOverLifetimeModule trailSmokeColor;
+    ParticleSystem.ColorOverLifetimeModule smokeColor;
+    [SerializeField] Color newColor;
+
+    [SerializeField, Range(0, 1)] float intensity;
+    [SerializeField, Range(0.25f, 2f)] float speedMultiplier = 1f;
+
     [SerializeField] ParticleSystem psExplosion;
-    
-    ParticleSystem.EmissionModule emission;
-    ParticleSystem.MainModule main;
-    ParticleSystem.EmissionModule emissionTrail;
-    ParticleSystem.MainModule mainTrail;
+    ParticleSystem.MainModule explosiveMain;
 
     [SerializeField] Color anticipationColor;
     [SerializeField] Color actionColor;
 
     [SerializeField] Animator lightAnimator;
-    [SerializeField] Animator animator;
 
     [SerializeField] AudioSource swordSlash;
     [SerializeField] AudioSource explosion;
 
+    float animatorInitialSpeed = 1f;
+
+    const float volumeImpact = 0.5f;
+
+    public void Intensity(float value) => intensity = value;
+    public void SpeedMultiplier(float value) => speedMultiplier = Mathf.Clamp(value, 0.25f, 2f);
+
+    void Start()
+    {
+        swordChargeMain = psMain.main;
+        swordChargeEmission = psMain.emission;
+        swordChargeColor = psMain.colorOverLifetime;
+
+        trailSmokeMain = psTrailSmoke.main;
+        trailSmokeEmission = psTrailSmoke.emission;
+        trailSmokeColor = psTrailSmoke.colorOverLifetime;
+
+        smokeMain = psSmoke.main;
+        smokeEmission = psSmoke.emission;
+        smokeColor = psSmoke.colorOverLifetime;
+
+        impactMain = psImpact.main;
+        fissureMain = psFissure.main;
+        explosiveMain = psExplosion.main;
+
+        animatorInitialSpeed = animator.speed;
+    }
 
     private void Update()
     {
         if (Input.GetKey(KeyCode.Space))
         {
-            animator.Play("Great Sword Cast");
+            animator.SetTrigger("StartAnim");       
         }
-    }
-
-    //Conseguir los componentes.
-    void Awake()
-    {
-        emission = ps.emission;
-        main = ps.main;
-        emissionTrail = psTrail.emission;
-        mainTrail = psTrail.main;
     }
 
     public void AnimIdle()
     {
-        ps.Stop();
-        psTrail.Stop();
+        psMain.Stop();
+        psTrailSmoke.Stop();
+        psSmoke.Stop();
+        psImpact.Stop();
     }
 
     //Emisión, tamaño y color inicial.
     public void AnimAnticipation() {
-        ps.Play();
-        psTrail.Play();
-        emission.rateOverTime = 100;
-        main.startSize = new ParticleSystem.MinMaxCurve(0.25f);
-        main.startColor = anticipationColor;
-        emissionTrail.rateOverTime = 100;
-        mainTrail.startSize = new ParticleSystem.MinMaxCurve(0.25f);
-        mainTrail.startColor = anticipationColor;
+        psMain.Play();
+        psTrailSmoke.Play();
+        psSmoke.Play();
+        psImpact.Play();
+        swordChargeEmission.rateOverTime = new ParticleSystem.MinMaxCurve(100 * intensity);
+        swordChargeMain.startSize = new ParticleSystem.MinMaxCurve(0.25f);
+        swordChargeMain.startColor = anticipationColor;
+        swordChargeColor.color = new ParticleSystem.MinMaxGradient(newColor);
+        swordChargeMain.simulationSpeed = speedMultiplier;
+
+        trailSmokeEmission.rateOverTime = new ParticleSystem.MinMaxCurve(100 * intensity);
+        trailSmokeEmission.rateOverDistance = new ParticleSystem.MinMaxCurve(100 * intensity);
+        trailSmokeMain.startSize = new ParticleSystem.MinMaxCurve(0.25f);
+        trailSmokeMain.startColor = anticipationColor;
+        trailSmokeColor.color = new ParticleSystem.MinMaxGradient(newColor);
+        trailSmokeMain.simulationSpeed = speedMultiplier;
+
+        smokeEmission.rateOverTime = new ParticleSystem.MinMaxCurve(100 * intensity);
+        smokeMain.startSize = new ParticleSystem.MinMaxCurve(0.25f);
+        smokeMain.startColor = anticipationColor;
+        smokeColor.color = new ParticleSystem.MinMaxGradient(newColor);
+        smokeMain.simulationSpeed = speedMultiplier;
+
+        impactMain.startSize = new ParticleSystem.MinMaxCurve(0.25f * intensity);
+        impactMain.simulationSpeed = speedMultiplier;
+
+        fissureMain.simulationSpeed = speedMultiplier;
+
+        animator.speed = animatorInitialSpeed * speedMultiplier;
+
     }
 
-    //Cambio de wmisión, tamaño y color.
+    //Cambio de emisión, tamaño y color.
     public void AnimAction() {
         lightAnimator.SetTrigger("Activate");
-        emission.rateOverTime = 125;
-        main.startSize = new ParticleSystem.MinMaxCurve(1f);
-        main.startColor = actionColor;
-        emissionTrail.rateOverTime = 25;
-        mainTrail.startSize = new ParticleSystem.MinMaxCurve(0.75f);
-        mainTrail.startColor = anticipationColor;
+        swordChargeEmission.rateOverTime = new ParticleSystem.MinMaxCurve(125 * intensity);
+        swordChargeMain.startSize = new ParticleSystem.MinMaxCurve(1f);
+        swordChargeMain.startColor = actionColor;
+        swordChargeMain.simulationSpeed = speedMultiplier;
+
+        trailSmokeEmission.rateOverTime = new ParticleSystem.MinMaxCurve(125 * intensity);
+        trailSmokeEmission.rateOverDistance = new ParticleSystem.MinMaxCurve(125 * intensity);
+        trailSmokeMain.startSize = new ParticleSystem.MinMaxCurve(0.75f);
+        trailSmokeMain.startColor = actionColor;
+        trailSmokeMain.simulationSpeed = speedMultiplier;
+
+        smokeEmission.rateOverTime = new ParticleSystem.MinMaxCurve(125 * intensity);
+        smokeMain.startSize = new ParticleSystem.MinMaxCurve(1f);
+        smokeMain.startColor = actionColor;
+        smokeMain.simulationSpeed = speedMultiplier;
+
+        impactMain.startSize = new ParticleSystem.MinMaxCurve(3f * intensity);
+        impactMain.simulationSpeed = speedMultiplier;
+
+        fissureMain.simulationSpeed = speedMultiplier;
+
+        animator.speed = animatorInitialSpeed * speedMultiplier;
     }
 
     public void AnimActionTrail()
     {
-        emissionTrail.rateOverTime = 25;
-        mainTrail.startSize = new ParticleSystem.MinMaxCurve(1.25f);
-        mainTrail.startColor = actionColor;
+        trailSmokeEmission.rateOverTime = new ParticleSystem.MinMaxCurve(25 * intensity);
+        trailSmokeEmission.rateOverDistance = new ParticleSystem.MinMaxCurve(25 * intensity);
+        trailSmokeMain.startSize = new ParticleSystem.MinMaxCurve(1.25f);
+        trailSmokeMain.startColor = actionColor;
+        trailSmokeMain.simulationSpeed = speedMultiplier;
+
+        animator.speed = animatorInitialSpeed * speedMultiplier;
     }
 
     public void AnimDimision()
     {
-        emission.rateOverTime = 5;
-        main.startSize = new ParticleSystem.MinMaxCurve(0.25f);
-        main.startColor = anticipationColor;
-        emissionTrail.rateOverTime = 5;
-        mainTrail.startSize = new ParticleSystem.MinMaxCurve(0.25f);
-        mainTrail.startColor = anticipationColor;
+        swordChargeEmission.rateOverTime = new ParticleSystem.MinMaxCurve(5 * intensity);
+        swordChargeMain.startSize = new ParticleSystem.MinMaxCurve(0.25f);
+        swordChargeMain.startColor = anticipationColor;
+        swordChargeMain.simulationSpeed = speedMultiplier;
 
+        trailSmokeEmission.rateOverTime = new ParticleSystem.MinMaxCurve(5 * intensity);
+        trailSmokeEmission.rateOverDistance = new ParticleSystem.MinMaxCurve(5 * intensity);
+        trailSmokeMain.startSize = new ParticleSystem.MinMaxCurve(0.25f);
+        trailSmokeMain.startColor = anticipationColor;
+        trailSmokeMain.simulationSpeed = speedMultiplier;
+
+        smokeEmission.rateOverTime = new ParticleSystem.MinMaxCurve(5 * intensity);
+        smokeMain.startSize = new ParticleSystem.MinMaxCurve(0.25f);
+        smokeMain.startColor = anticipationColor;
+        smokeMain.simulationSpeed = speedMultiplier;
+
+        impactMain.startSize = new ParticleSystem.MinMaxCurve(0.25f * intensity);
+        impactMain.simulationSpeed = speedMultiplier;
+
+        fissureMain.simulationSpeed = speedMultiplier;
+
+        animator.speed = animatorInitialSpeed * speedMultiplier;
     }
 
     public void AnimExplosion()
     {
         psExplosion.Play();
+        explosiveMain.simulationSpeed = speedMultiplier;
+        lightAnimator.SetTrigger("Activate");
     }
     public void soundExplosion()
     {
+        explosion.volume = intensity * volumeImpact + (1 - volumeImpact);
+        explosion.pitch = speedMultiplier;
         explosion.Play();
     }
     public void soundSword()
     {
+        swordSlash.volume = intensity * volumeImpact + (1 - volumeImpact);
+        swordSlash.pitch = speedMultiplier;
         swordSlash.Play();
     }
 

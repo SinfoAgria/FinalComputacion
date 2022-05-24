@@ -59,15 +59,15 @@ ModelImporter:
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
       events:
-      - time: 0
-        functionName: AnimAnticipation
+      - time: 0.018566767
+        functionName: soundExplosion
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
-      - time: 0.060367454
-        functionName: soundExplosion
+      - time: 0.019292604
+        functionName: AnimAnticipation
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
@@ -87,7 +87,7 @@ ModelImporter:
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
-      - time: 0.42436978
+      - time: 0.4886785
         functionName: soundSword
         data: 
         objectReferenceParameter: {instanceID: 0}
